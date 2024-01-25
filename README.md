@@ -1,81 +1,22 @@
-# Federated Learning Benchmark
+# Towards Optimal Customized Architecture for Heterogeneous Federated Learning with Contrastive Cloud-Edge Model Decoupling
 
-</h1>
+## 1. Abstract
+Federated learning, as a promising distributed learning paradigm, enables collaborative training of a global model across multiple network edge clients without the need for central data collecting. However, the heterogeneity of edge data distribution will draft the model towards the local minima, which can
+be distant from the global optimum. This phenomenon called “client-draft” often leads to slow convergence and substantial communication overhead. To tackle these issues, we propose a novel federated learning framework called FedCMD with a contrastive Cloud-edge model decoupling to separate deep neural networks into a body for capturing shared representations in the Cloud and a personalized head for migrating data heterogeneity in the edges. Departing from the traditional approach of rigidly assigning the last layer as the personalized head and pre-output layers as the body, we explore the performance gains of selecting different neural network layers as the personalized head and find that utilizing the last layer is not always optimal. This observation inspired us to investigate a representation method to capture the heterogeneity of data distributions of each client and leverage the knowledgeization toward optimal personalized layer selection. Therefore, we utilize the low-dimensional representation of each layer to contrast feature distribution transfer and introduce a Wasserstein-based layer selection method, aimed at identifying the best-match layer for personalization. Additionally, a weighted global aggregation algorithm is proposed based on the selected personalized layer for the practical application of FedCMD. Extensive experiments on ten benchmarks demonstrate the efficiency and superior performance of our solution compared with nine state-of-the-art solution.
+
+### 2. Framework
   <p align="center">
-    <a href="https://github.com/KarhouTam/FL-bench/blob/master/LICENSE">
-      <img alt="GitHub License" src="https://img.shields.io/github/license/KarhouTam/FL-bench?style=for-the-badge&logo=github&color=8386e0"/>
-    </a>
-    <a href="https://github.com/KarhouTam/FL-bench/issues?q=is%3Aissue+is%3Aclosed">
-      <img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed-raw/KarhouTam/FL-bench?style=for-the-badge&logo=github&color=8386e0">
-    </a>
-    <a href="https://github.com/KarhouTam/FL-bench/stargazers">
-      <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/KarhouTam/FL-bench?style=for-the-badge&logo=github&color=8386e0">
-    </a>
-    <a href="https://github.com/KarhouTam/FL-bench/forks">
-      <img alt="GitHub Repo forks" src="https://img.shields.io/github/forks/KarhouTam/FL-bench?style=for-the-badge&logo=github&color=8386e0">
-    </a>
+      <img alt="framework" src="https://img.shields.io/github/license/KarhouTam/FL-bench?style=for-the-badge&logo=github&color=8386e0"/>
   </p>
-<h4 align="center"><i>This is a benchmark for evaluating well-known federated learning (FL) and personalized federated learning (pFL) methods. This benchmark is not complicated and easy to extend.</i></h4>
+The above figure presents the diagram of FedCMD. We consider the Cloud-edge cooperation system, in which two types of nodes are involved, including one Cloud server, and multiple edge clients. FedCMD contains two major phases including <strong> the personalized layer selection phase </strong> and the heterogeneous federated learning phase with the Cloud-edge model decoupling. In personalized layer selection phase, the Cloud-edge system employs the standard federated learning such as FedAvg and utilizes the contrastive layer selection mechanism to collaboratively elect the personalized layer. Thus, the selection proceeds as follows:
+<ul>
+  <li><strong>Global parameters broadcasting:</strong> The central server initializes the global model parameter and distributes them to all edge clients.</li>
+  <li><strong>Local model updating:</strong> After receiving the global parameter, each client updates their local model and trains the model using the local data.</li>
+  <li><strong>Local Layer Selection:</strong> Based on the criteria of layer selection, each edge client selects a personalized layer from their model during the training.</li>
+  
+</ul>
 
-## Methods 🧬
 
-### Traditional FL Methods
-
-- ***FedAvg*** -- [Communication-Efficient Learning of Deep Networks from Decentralized Data](https://arxiv.org/abs/1602.05629) (AISTATS'17)
-
-- ***FedAvgM*** -- [Measuring the Effects of Non-Identical Data Distribution for Federated Visual Classification](https://arxiv.org/abs/1909.06335) (ArXiv'19)
-
-- ***FedProx*** -- [Federated Optimization in Heterogeneous Networks](https://arxiv.org/abs/1812.06127) (MLSys'20)
-
-- ***SCAFFOLD*** -- [SCAFFOLD: Stochastic Controlled Averaging for Federated Learning](https://arxiv.org/abs/1910.06378) (ICML'20)
-
-- ***MOON*** -- [Model-Contrastive Federated Learning](http://arxiv.org/abs/2103.16257) (CVPR'21)
-
-- ***FedDyn*** -- [Federated Learning Based on Dynamic Regularization](http://arxiv.org/abs/2111.04263) (ICLR'21)
-
-- ***FedLC*** -- [Federated Learning with Label Distribution Skew via Logits Calibration](http://arxiv.org/abs/2209.00189) (ICML'22)
-
-- ***FedGen*** -- [Data-Free Knowledge Distillation for Heterogeneous Federated Learning](https://arxiv.org/abs/2105.10056) (ICML'21)
-
-### Personalized FL Methods
-
-- ***pFedSim (My Work⭐)*** -- [pFedSim: Similarity-Aware Model Aggregation Towards Personalized Federated Learning](https://arxiv.org/abs/2305.15706) (ArXiv'23)
-
-- ***Local-Only*** -- Local training only (without communication).
-
-- ***FedMD*** -- [FedMD: Heterogenous Federated Learning via Model Distillation](http://arxiv.org/abs/1910.03581) (NIPS'19)
-
-- ***APFL*** -- [Adaptive Personalized Federated Learning](http://arxiv.org/abs/2003.13461) (ArXiv'20)
-
-- ***LG-FedAvg*** -- [Think Locally, Act Globally: Federated Learning with Local and Global Representations](https://arxiv.org/abs/2001.01523) (ArXiv'20)
-
-- ***FedBN*** -- [FedBN: Federated Learning On Non-IID Features Via Local Batch Normalization](http://arxiv.org/abs/2102.07623) (ICLR'21)
-
-- ***FedPer*** -- [Federated Learning with Personalization Layers](http://arxiv.org/abs/1912.00818) (AISTATS'20)
-
-- ***FedRep*** -- [Exploiting Shared Representations for Personalized Federated Learning](http://arxiv.org/abs/2102.07078) (ICML'21)
-
-- ***Per-FedAvg*** -- [Personalized Federated Learning with Theoretical Guarantees: A Model-Agnostic Meta-Learning Approach](https://proceedings.neurips.cc/paper/2020/hash/24389bfe4fe2eba8bf9aa9203a44cdad-Abstract.html) (NIPS'20)
-
-- ***pFedMe*** -- [Personalized Federated Learning with Moreau Envelopes](http://arxiv.org/abs/2006.08848) (NIPS'20)
-
-- ***Ditto*** -- [Ditto: Fair and Robust Federated Learning Through Personalization](http://arxiv.org/abs/2012.04221) (ICML'21)
-
-- ***pFedHN*** -- [Personalized Federated Learning using Hypernetworks](http://arxiv.org/abs/2103.04628) (ICML'21)
-
-- ***pFedLA*** -- [Layer-Wised Model Aggregation for Personalized Federated Learning](https://openaccess.thecvf.com/content/CVPR2022/html/Ma_Layer-Wised_Model_Aggregation_for_Personalized_Federated_Learning_CVPR_2022_paper.html) (CVPR'22)
-
-- ***CFL*** -- [Clustered Federated Learning: Model-Agnostic Distributed Multi-Task Optimization under Privacy Constraints](https://arxiv.org/abs/1910.01991) (ArXiv'19)
-
-- ***FedFomo*** -- [Personalized Federated Learning with First Order Model Optimization](http://arxiv.org/abs/2012.08565) (ICLR'21)
-
-- ***FedBabu*** -- [FedBabu: Towards Enhanced Representation for Federated Image Classification](https://arxiv.org/abs/2106.06042) (ICLR'22)
-
-- ***FedAP*** -- [Personalized Federated Learning with Adaptive Batchnorm for Healthcare](https://arxiv.org/abs/2112.00734) (IEEE'22)
-
-- ***kNN-Per*** -- [Personalized Federated Learning through Local Memorization](http://arxiv.org/abs/2111.09360) (ICML'22)
-
-- ***MetaFed*** -- [MetaFed: Federated Learning among Federations with Cyclic Knowledge Distillation for Personalized Healthcare](http://arxiv.org/abs/2206.08516) (IJCAI'22)
 
 
 ## Environment Preparation 🚀
